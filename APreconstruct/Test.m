@@ -22,21 +22,20 @@ P.lam   = 0.1;  % firing rate = lam/dt
 P.sig   = 0.2;  % standard deviation of observation noise 
 
 
-[Nhat Phat] = fast_oopsi(F,V,P);
+% [Nhat Phat] = fast_oopsi(F,V,P);
 % Nhat(Nhat<0.6) = 0;
-
-
+% 
+% 
 % V.smc_iter_max = 1;
 % [M P V] = smc_oopsi(F,V,P);
 % tvec=0:V.dt:(T-1)*V.dt;
-
+% 
 % figure(1);
 % h(1)=subplot(211); plot(tvec,F); axis('tight'), ylabel('F (au)')
 % h(2)=subplot(212); plot(tvec,Nhat,'r','linewidth',1), axis('tight'), ylabel('fast')
-
+% 
 % Nsmc = M.nbar/max(M.nbar);
-% Nsmc(Nsmc<0.1)=0;
-% h(3)=subplot(313); stem(tvec,N); hold on, plot(tvec,Nsmc,'k','linewidth',2); axis('tight'), ylabel('smc')
+% h(3)=subplot(313);  plot(tvec,Nsmc,'k','linewidth',2); axis('tight'), ylabel('smc')
 
 % figure;
 % RasterTraces = Fish.rasterAlltrials;
@@ -46,10 +45,19 @@ P.sig   = 0.2;  % standard deviation of observation noise
 
 SpikeMatrix = zeros(size(RasterTraces));
 fprintf('Reconstructed            ');
-for NeuronIndex = 1:NeuronNum
+for NeuronIndex = 1:10%NeuronNum
 
-    CurrentSpikeTrail = fast_oopsi(RasterTraces(NeuronIndex,:),V,P);
-    SpikeMatrix(NeuronIndex,:) = CurrentSpikeTrail;
+    Nhat = fast_oopsi(RasterTraces(NeuronIndex,:),V,P);
+    Max_Spike = ceil(max(Nhat));
+    for Spike = 0:1:Max_Spike
+
+        Nhat((Nhat>Spike-0.5)&(Nhat<Spike+0.5)) = Spike;
+
+    end
+    
+    SpikeMatrix(NeuronIndex,:) = Nhat;
+    
+    
     
     IndexPrint = num2str(NeuronIndex);
     backSpace = length(IndexPrint);
@@ -61,5 +69,11 @@ for NeuronIndex = 1:NeuronNum
 
 end
 fprintf('\n');
+
+TestIndex = 10;
+figure;
+hold on;
+plot(RasterTraces(NeuronIndex,1:100));
+stem(SpikeMatrix(NeuronIndex,1:100))
 
 

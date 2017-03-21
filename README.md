@@ -1,5 +1,5 @@
 Differential Corvriance:
-This project is a implementation of thw work below:
+This project is an implementation of thw work below:
 Lin, Tiger W., et al. "Differential Covariance: A New Class of Methods to Estimate Sparse Connectivity from Neural Recordings." (Unpublished paper)
 
 Reconstruct the functional connectivity by differential covariance-based methods.
